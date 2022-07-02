@@ -1,12 +1,17 @@
-#pragma once
+#ifndef NETWORKAPP_H
+#define NETWORKAPP_H
 
+#include <QMainWindow>
 #include <QtWidgets/QMainWindow>
 #include <QtNetwork>
 #include <QFileDialog>
 #include <QPainter>
 #include <QPolygon>
 #include <QMessageBox>
-#include "ui_networkApp.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class networkApp; }
+QT_END_NAMESPACE
 
 class networkApp : public QMainWindow
 {
@@ -15,7 +20,6 @@ class networkApp : public QMainWindow
 public:
     networkApp(QWidget *parent = nullptr);
     ~networkApp();
-    void paintEvent(QPaintEvent* event);
 
 private slots :
     void trySendFile();
@@ -23,6 +27,7 @@ private slots :
     void clicked_select_file();
     void sendFile();
 private:
+    void paintEvent(QPaintEvent* event);
     void endSend();
     void updatePercent();
     void sendFile(const QString& filename);
@@ -33,5 +38,7 @@ private:
     qint64 sendSize;
     double percent;
 
-    Ui::networkAppClass ui;
+private:
+    Ui::networkApp *ui;
 };
+#endif // NETWORKAPP_H

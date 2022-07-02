@@ -1,18 +1,22 @@
-#include "networkApp.h"
+#include "networkapp.h"
+#include "ui_networkapp.h"
 
 #define BUFFER_SIZE 1024
 
 networkApp::networkApp(QWidget *parent)
     : QMainWindow(parent)
+    , ui(new Ui::networkApp)
 {
-    ui.setupUi(this);
+    ui->setupUi(this);
+
     percent = 0;
-    connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(clicked_select_file()));
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_select_file()));
 
     _socket = new QTcpSocket(this);
     connect(_socket, SIGNAL(connected()), this, SLOT(trySendFile()));
     connect(_socket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 }
+
 
 void networkApp::displayError(QAbstractSocket::SocketError socketError) {
     qDebug() << "Error";
@@ -38,7 +42,7 @@ void networkApp::clicked_select_file() {
 
 void networkApp::trySendFile() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), "/home");
-    
+
     if (!filename.isEmpty()) {
         sendFile(filename);
     }
@@ -56,7 +60,6 @@ void networkApp::sendFile(const QString& fileName) {
     }
     file = new QFile(fileName);
 
-    fileSize = file->size();
     sendSize = 0;
     updatePercent();
 
@@ -65,10 +68,11 @@ void networkApp::sendFile(const QString& fileName) {
         QDataStream out(&data, QIODevice::WriteOnly);
 
         QFileInfo fileInfo(fileName);
+        fileSize = file->size();
 
         out << file->size() << fileInfo.fileName();
         qDebug() << file->size() << fileInfo.fileName();
-        
+
         _socket->write(data);
         _socket->waitForBytesWritten();
         connect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendFile()));
@@ -77,7 +81,6 @@ void networkApp::sendFile(const QString& fileName) {
 }
 
 void networkApp::sendFile() {
-    qint64 inSize;
     char buffer[BUFFER_SIZE];
     memset(buffer, '\0', BUFFER_SIZE);
 
@@ -98,7 +101,7 @@ void networkApp::sendFile() {
 
 void networkApp::updatePercent() {
     percent = static_cast<double> (sendSize) / static_cast<double> (fileSize);
-    qDebug() << percent << "percent";
+    //qDebug() << percent << "percent";
     this->update();
 }
 
@@ -106,11 +109,15 @@ void networkApp::paintEvent(QPaintEvent* event) {
     QPainter painter;
     painter.begin(this);
     painter.setPen(Qt::gray);
-    QRect rec (ui.centralWidget->x() + 10, ui.centralWidget->y() + 10, ui.centralWidget->x() + 410, ui.centralWidget->y() + 30);
+    QRect rec (ui->centralwidget->x() + 10, ui->centralwidget->y() + 10, ui->centralwidget->x() + 410, ui->centralwidget->y() + 30);
     painter.drawRect(rec);
     painter.setBrush(Qt::green);
     painter.drawPolygon(QPolygon() << QPoint(rec.x() + rec.width() * percent, rec.y()) << QPoint(rec.x(), rec.y()) << QPoint(rec.x(), rec.y() + rec.height()) << QPoint(rec.x() + rec.width() * percent, rec.y() + rec.height()));
     painter.end();
 }
 
-networkApp::~networkApp() {}
+networkApp::~networkApp()
+{
+    delete ui;
+}
+

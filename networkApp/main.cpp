@@ -1,5 +1,6 @@
-#include "networkApp.h"
-#include <QtWidgets/QApplication>
+#include "networkapp.h"
+
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
