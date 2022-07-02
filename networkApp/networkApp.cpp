@@ -2,6 +2,7 @@
 #include "ui_networkapp.h"
 
 #define BUFFER_SIZE 1024
+#define PORT 6666
 
 networkApp::networkApp(QWidget *parent)
     : QMainWindow(parent)
@@ -37,7 +38,7 @@ void networkApp::displayError(QAbstractSocket::SocketError socketError) {
 
 void networkApp::clicked_select_file() {
     qDebug() << "try to connect";
-    _socket->connectToHost(QHostAddress::LocalHost, 6666);
+    _socket->connectToHost(QHostAddress::LocalHost, PORT);
 }
 
 void networkApp::trySendFile() {
