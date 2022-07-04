@@ -93,8 +93,11 @@ void networkApp::sendFile() {
     }
     else {
         sendSize = 0;
+
         file->close();
+        delete file;
         file = NULL;
+
         disconnect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendFile()));
         endSend();
     }
@@ -119,6 +122,6 @@ void networkApp::paintEvent(QPaintEvent* event) {
 
 networkApp::~networkApp()
 {
+    delete _socket;
     delete ui;
 }
-

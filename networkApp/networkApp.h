@@ -31,6 +31,7 @@ private:
     void endSend();
     void updatePercent();
     void sendFile(const QString& filename);
+
     QTcpSocket* _socket;
     QFile* file;
 
